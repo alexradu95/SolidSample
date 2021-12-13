@@ -1,10 +1,4 @@
-﻿using ArdalisRating.PolicyRater;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
-using System.IO;
-
-namespace ArdalisRating
+﻿namespace ArdalisRating
 {
     /// <summary>
     /// The RatingEngine reads the policy application details from a file and produces a numeric 
@@ -12,25 +6,29 @@ namespace ArdalisRating
     /// </summary>
     public class RatingEngine
     {
-
-        private PolicyReader policyReader = new PolicyReader();
-        public Logging Logger = new Logging();
+        public IRatingContext Context { get; set; } = new DefaultRatingContext();
         public decimal Rating { get; set; }
+
+        public RatingEngine()
+        {
+            Context.Engine = this;
+        }
+
         public void Rate()
         {
-            Logger.Log("Starting rate.");
+            Context.Log("Starting rate.");
 
-            Logger.Log("Loading policy.");
+            Context.Log("Loading policy.");
 
-            var policy = policyReader.ReadPolicy();
+            string policyJson = Context.LoadPolicyFromFile();
 
-            var factory = new PolicyRaterFactory();
+            var policy = Context.GetPolicyFromJsonString(policyJson);
 
-            var rater = factory.Create(policy, this);
+            var rater = Context.CreateRaterForPolicy(policy, Context);
 
             rater.Rate(policy);
 
-            Logger.Log("Rating completed.");
+            Context.Log("Rating completed.");
         }
     }
 }
