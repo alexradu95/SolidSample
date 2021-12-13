@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ArdalisRating
 {
-    internal class Logging
+    public class Logging
     {
 
         public void Log(string s)
