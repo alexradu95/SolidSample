@@ -26,7 +26,7 @@ namespace ArdalisRating.PolicyRater
                     new object[] { engine, engine.Logger});
             } catch
             {
-                return null;
+                return new UnknownPolicyRater(engine, engine.Logger);
             }
         }
     }
